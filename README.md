@@ -3,7 +3,7 @@
 
 ##Instructions
 
-```
+```javascript
 import { requestFactory, GET, POST, POST_FILE, PUT, DELETE} from 'twopicode-network-utils'
 
 const get = requestFactory(GET)

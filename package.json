@@ -1,7 +1,7 @@
 {
   "name": "twopi-network-utils",
   "version": "1.0.0",
-  "description": "A set of utilities to improve code reusability across javascript projects.",
+  "description": "A set of network utilities to improve code reusability across javascript projects.",
   "main": "./dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist",

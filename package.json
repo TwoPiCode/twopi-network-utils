@@ -1,6 +1,6 @@
 {
   "name": "twopi-network-utils",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A set of network utilities to improve code reusability across javascript projects.",
   "main": "./dist/index.js",
   "scripts": {

@@ -1,4 +1,5 @@
-import 'whatwg-fetch'
+require('es6-promise').polyfill()
+require('fetch-everywhere')
 
 const GET = 'GET'
 const POST = 'POST'

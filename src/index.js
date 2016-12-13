@@ -38,21 +38,23 @@ const requestFactory = (meth, notify = null) => {
       method: meth,
       body: body
     }).then(resp => {
-      const contentType = resp.headers.get('content-type')
-      if (contentType !== 'application/json') {
-        const errorMessage = 'Received unexpected response from the server.'
-        const e = new Error(errorMessage)
-        e.errorMessage = errorMessage
-        throw e
-      }
-
       if (resp.status >= 200 && resp.status < 300) {
-        return resp.json()
+        return resp.json().catch(err => {
+          const errorMessage = 'Received unexpected response from the server.'
+          const e = new Error(errorMessage)
+          e.errorMessage = errorMessage
+          throw e
+        })
       } else {
         return resp.json().then((err) => {
           let e = new Error(JSON.stringify(err))
           e.status = resp.status
           e.body = err
+          throw e
+        }).catch(err => {
+          const errorMessage = 'Received unexpected response from the server.'
+          const e = new Error(errorMessage)
+          e.errorMessage = errorMessage
           throw e
         })
       }
@@ -63,6 +65,7 @@ const requestFactory = (meth, notify = null) => {
         const msg = e.errorMessage || 'A network error occurred. Please try again.'
         if (notify) notify(msg)
       }
+      console.log(e)
       return Promise.reject(e)
     })
   }

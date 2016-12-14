@@ -65,7 +65,6 @@ const requestFactory = (meth, notify = null) => {
         const msg = e.errorMessage || 'A network error occurred. Please try again.'
         if (notify) notify(msg)
       }
-      console.log(e)
       return Promise.reject(e)
     })
   }

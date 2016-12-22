@@ -15,5 +15,6 @@ before_deploy:
 deploy:
   provider: npm
   api_key: "$NPM_API_KEY"
+  email: nick@nickwhyte.com
   on:
     tags: true

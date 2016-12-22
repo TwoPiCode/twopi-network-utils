@@ -1,4 +1,4 @@
-import {requestFactory, GET, POST, JSONParseError, Non200Error} from './index'
+import {requestFactory, GET, Non200Error, JSONParseError} from './index'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import fetchMock from 'fetch-mock'
@@ -6,11 +6,11 @@ import fetchMock from 'fetch-mock'
 chai.use(chaiAsPromised)
 chai.should()
 
-var expect = chai.expect
+let expect = chai.expect
 
-describe("Network Util", function() {
+describe('Network Util', function() {
 
-  afterEach(fetchMock.restore);
+  afterEach(fetchMock.restore)
 
   it('should return the correct response for a 200', function() {
     const responseToSend = {
@@ -18,7 +18,7 @@ describe("Network Util", function() {
       status: 200
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().then(json => {
       return expect(json).to.deep.equal(responseToSend.body)
     })
@@ -30,12 +30,9 @@ describe("Network Util", function() {
       status: 401
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
-      return expect(resp).to.deep.equal({
-        ...responseToSend,
-        errorType: 'Non200Error'
-      })
+      return expect(resp).to.be.an.instanceOf(Non200Error).and.to.have.a.property('status', 401)
     })
   })
 
@@ -45,12 +42,9 @@ describe("Network Util", function() {
       status: 403
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
-      return expect(resp).to.deep.equal({
-        ...responseToSend,
-        errorType: 'Non200Error'
-      })
+      return expect(resp).to.be.an.instanceOf(Non200Error).and.to.have.a.property('status', 403)
     })
   })
 
@@ -60,12 +54,9 @@ describe("Network Util", function() {
       status: 500
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
-      return expect(resp).to.deep.equal({
-        status: 500,
-        errorType: 'JSONParseError'
-      })
+      return expect(resp).to.be.an.instanceOf(JSONParseError).and.to.have.a.property('status', 500)
     })
   })
 
@@ -75,12 +66,9 @@ describe("Network Util", function() {
       status: 500
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
-      return expect(resp).to.deep.equal({
-        ...responseToSend,
-        errorType: 'Non200Error'
-      })
+      return expect(resp).to.be.an.instanceOf(Non200Error).and.to.have.a.property('status', 500)
     })
   })
 
@@ -90,12 +78,9 @@ describe("Network Util", function() {
       status: 500
     }
 
-    fetchMock.once('*', responseToSend);
+    fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
-      return expect(resp).to.deep.equal({
-        status: 500,
-        errorType: 'JSONParseError'
-      })
+      return expect(resp).to.be.an.instanceOf(JSONParseError).and.to.have.a.property('status', 500)
     })
   })
 })

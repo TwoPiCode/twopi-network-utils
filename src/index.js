@@ -8,26 +8,34 @@ const PUT = 'PUT'
 const DELETE = 'DELETE'
 
 
-const JSONParseError = 'JSONParseError'
-const Non200Error = 'Non200Error'
+// const JSONParseError = 'JSONParseError'
+// const Non200Error = 'Non200Error'
+
+function JSONParseError(status, body) {
+  this.name = 'JSONParseError'
+  this.status = status
+  this.body = body
+  this.message = 'Received unexpected response from the server.'
+  this.stack = (new Error()).stack
+}
+JSONParseError.prototype = Object.create(Error.prototype)
+JSONParseError.prototype.constructor = JSONParseError
+
+function Non200Error(status, body) {
+  this.name = 'Non200Error'
+  this.status = status
+  this.body = body
+  this.message = 'A network error occurred. Please try again.'
+  this.stack = (new Error()).stack
+}
+Non200Error.prototype = Object.create(Error.prototype)
+Non200Error.prototype.constructor = Non200Error
 
 const contentType = {
   GET: 'application/x-www-form-urlencoded',
   POST: 'application/json',
   PUT: 'application/json',
   DELETE: 'application/json',
-}
-
-const networkError = (status, errorType, body, notify, message) => {
-  const errorMessage = message || 'A network error occurred. Please try again.'
-  const e = new Error(errorMessage)
-  e.status = status
-  e.errorType = errorType
-  if (body) {
-    e.body = body
-  }
-  if (notify) notify(errorMessage)
-  return e
 }
 
 const requestFactory = (meth, notify = null) => {
@@ -54,11 +62,15 @@ const requestFactory = (meth, notify = null) => {
       method: meth,
       body: body
     }).then(resp => {
-      return resp.json().catch(err => {
-        throw networkError(resp.status, JSONParseError, undefined, notify, 'Received unexpected response from the server.')
+      return resp.json().catch(() => {
+        if (notify)
+          notify('Received unexpected response from the server.')
+        throw new JSONParseError(resp.status)
       }).then(json => {
         if (resp.status < 200 || resp.status > 300) {
-          throw networkError(resp.status, Non200Error, json)
+          if (notify)
+            notify('Received unexpected response from the server.')
+          throw new Non200Error(resp.status, json)
         } else {
           return Promise.resolve(json)
         }

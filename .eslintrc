@@ -16,9 +16,6 @@
     "quotes": [2, "single", "avoid-escape"],
     "strict": [2, "never"],
     "semi-spacing": [2, {"before": false, "after": true}],
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
-    "react/react-in-jsx-scope": 2,
     "comma-dangle": 0,
     "eqeqeq": [2, "smart"],
     "semi": [2, "never"],
@@ -26,9 +23,5 @@
     "no-console": [2, { "allow": ["info", "warn", "error"] }],
     "no-var": 1,
     "no-mixed-spaces-and-tabs": 2
-
-  },
-  "plugins": [
-    "react"
-  ]
+  }
 }

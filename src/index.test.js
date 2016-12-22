@@ -72,7 +72,7 @@ describe('Network Util', function() {
     })
   })
 
-  it('should have the correct error for a non-json response', function() {
+  it('should have the correct error for a non-json 500 response', function() {
     const responseToSend = {
       body: '<html><body>Test</body></html>',
       status: 500
@@ -81,6 +81,18 @@ describe('Network Util', function() {
     fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
       return expect(resp).to.be.an.instanceOf(JSONParseError).and.to.have.a.property('status', 500)
+    })
+  })
+
+  it('should have the correct error for a non-json 200 response', function() {
+    const responseToSend = {
+      body: '<html><body>Test</body></html>',
+      status: 200
+    }
+
+    fetchMock.once('*', responseToSend)
+    return requestFactory(GET)().catch(resp => {
+      return expect(resp).to.be.an.instanceOf(JSONParseError).and.to.have.a.property('status', 200)
     })
   })
 })

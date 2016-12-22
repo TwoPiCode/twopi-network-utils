@@ -7,10 +7,6 @@ const POST_FILE = 'POSTFILE'
 const PUT = 'PUT'
 const DELETE = 'DELETE'
 
-
-// const JSONParseError = 'JSONParseError'
-// const Non200Error = 'Non200Error'
-
 function JSONParseError(status, body) {
   this.name = 'JSONParseError'
   this.status = status

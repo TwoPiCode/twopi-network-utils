@@ -35,26 +35,28 @@ const contentType = {
 }
 
 const requestFactory = (meth, notify = null) => {
-  let _headers = {}
+  let methodHeaders = {}
 
   // We need this to be able to send formData
   if (meth === POST_FILE) {
     meth = POST
   } else {
-    _headers['Content-Type'] = contentType[meth]
+    methodHeaders['Content-Type'] = contentType[meth]
   }
 
   return (token, path, body = undefined, options = {}, headers = {}) => {
+    let finalHeaders = {
+      ...methodHeaders,
+      ...headers
+    }
+
     if (token) {
-      _headers['Authorization'] = 'Bearer ' + token
+      finalHeaders['Authorization'] = 'Bearer ' + token
     }
 
     return fetch(path, {
       ...options,
-      headers: {
-        ..._headers,
-        ...headers
-      },
+      headers: finalHeaders,
       method: meth,
       body: body
     }).then(resp => {

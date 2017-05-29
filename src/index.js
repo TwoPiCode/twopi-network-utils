@@ -61,12 +61,12 @@ const requestFactory = (meth, notify = null) => {
       body: body
     }).then(resp => {
       // If the user does not want response converted to json include a "json": false mapping in the arguments[3]
-      if ("json" in options && options["json"] === false){
+      if ('json' in options && options['json'] === false){
         if (resp.status < 200 || resp.status > 300) {
-          if (notify) notify('Received unexpected response from the server.');
-          throw new Non200Error(resp.status, json);
+          if (notify) notify('Received unexpected response from the server.')
+          throw new Non200Error(resp.status, resp.text())
         }
-        return Promise.resolve(resp.text());
+        return Promise.resolve(resp.text())
       }
 
       return resp.json().catch(() => {

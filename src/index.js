@@ -6,6 +6,7 @@ const POST = 'POST'
 const POST_FILE = 'POSTFILE'
 const PUT = 'PUT'
 const DELETE = 'DELETE'
+const PATCH = 'PATCH'
 
 function JSONParseError(status, body) {
   this.name = 'JSONParseError'
@@ -32,6 +33,7 @@ const contentType = {
   POST: 'application/json',
   PUT: 'application/json',
   DELETE: 'application/json',
+  PATCH: 'application/json'
 }
 
 const requestFactory = (meth, notify = null) => {
@@ -86,4 +88,4 @@ const requestFactory = (meth, notify = null) => {
   }
 }
 
-module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, JSONParseError, Non200Error}
+module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error}

@@ -87,9 +87,6 @@ const requestFactory = (meth, notify = null) => {
           return Promise.resolve(json)
         }
       })
-    }).catch(err => {
-      console.error(err)
-      notify('There was a network error. Please try again later.')
     })
   }
 }

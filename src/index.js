@@ -78,13 +78,19 @@ const requestFactory = (meth, notify = null) => {
       }).then(json => {
         if (resp.status < 200 || resp.status > 300) {
           if (notify)
-            notify('Received unexpected response from the server.')
+            if (json._errors == undefined)
+              notify('Received unexpected response from the server.')
+            else
+              notify(json._errors.join('\n'))
           throw new Non200Error(resp.status, json)
         } else {
           return Promise.resolve(json)
         }
       })
-    })
+    }).catch(err => {
+      console.error(err)
+      notify('There was a network error. Please try again later.')
+    });
   }
 }
 

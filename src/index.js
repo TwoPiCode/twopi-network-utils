@@ -6,6 +6,7 @@ const POST = 'POST'
 const POST_FILE = 'POSTFILE'
 const PUT = 'PUT'
 const DELETE = 'DELETE'
+const PATCH = 'PATCH'
 
 function JSONParseError(status, body) {
   this.name = 'JSONParseError'
@@ -32,6 +33,7 @@ const contentType = {
   POST: 'application/json',
   PUT: 'application/json',
   DELETE: 'application/json',
+  PATCH: 'application/json'
 }
 
 const requestFactory = (meth, notify = null) => {
@@ -76,7 +78,7 @@ const requestFactory = (meth, notify = null) => {
       }).then(json => {
         if (resp.status < 200 || resp.status > 300) {
           if (notify)
-            if (json._errors == undefined)
+            if (json._errors === undefined)
               notify('Received unexpected response from the server.')
             else
               notify(json._errors.join('\n'))
@@ -85,11 +87,8 @@ const requestFactory = (meth, notify = null) => {
           return Promise.resolve(json)
         }
       })
-    }).catch(err => {
-      console.error(err)
-      notify('There was a network error. Please try again later.')
-    });
+    })
   }
 }
 
-module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, JSONParseError, Non200Error}
+module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error}

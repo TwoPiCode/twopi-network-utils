@@ -4,13 +4,14 @@
 ##Instructions
 
 ```javascript
-import { requestFactory, GET, POST, POST_FILE, PUT, DELETE} from 'twopicode-network-utils'
+import { requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH } from 'twopicode-network-utils'
 
 const get = requestFactory(GET)
 const post = requestFactory(POST)
 const post_file = requestFactory(POST_FILE)
 const put = requestFactory(PUT)
 const delete = requestFactory(DELETE)
+const patch = requestFactory(PATCH)
 
 
 get('http://example.com/api').then(resp => {

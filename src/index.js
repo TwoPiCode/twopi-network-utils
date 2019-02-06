@@ -63,11 +63,14 @@ const requestFactory = (meth, notify = null) => {
       body: body
     }).then(resp => {
       // If the user does not want response converted to json include a "json": false mapping in the arguments[3]
-      if ('json' in options && options['json'] === false){
-        if (resp.status < 200 || resp.status > 300) {
-          if (notify) notify('Received unexpected response from the server.')
-          throw new Non200Error(resp.status, resp.text())
-        }
+      if (resp.status < 200 || resp.status > 300) {
+        if (notify) notify('Received unexpected response from the server.')
+        throw new Non200Error(resp.status, resp.text())
+      }
+
+      if ('file' in options && options['file'] === true){
+        return Promise.resolve(resp.blob())
+      } else if ('json' in options && options['json'] === false){
         return Promise.resolve(resp.text())
       }
 
@@ -76,16 +79,7 @@ const requestFactory = (meth, notify = null) => {
           notify('Received unexpected response from the server.')
         throw new JSONParseError(resp.status)
       }).then(json => {
-        if (resp.status < 200 || resp.status > 300) {
-          if (notify)
-            if (json._errors === undefined)
-              notify('Received unexpected response from the server.')
-            else
-              notify(json._errors.join('\n'))
-          throw new Non200Error(resp.status, json)
-        } else {
-          return Promise.resolve(json)
-        }
+        return Promise.resolve(json)
       })
     })
   }

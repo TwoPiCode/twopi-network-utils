@@ -77,7 +77,7 @@ const requestFactory = (meth, notify = null) => {
       body: body
     }).then(resp => {
       // If the user does not want response converted to json include a "json": false mapping in the arguments[3]
-      if (!('json' in options) || options['json'] === true){
+      if (options['rtype'] === 'json'){
         return resp.json().catch(() => {
           if (notify)
             notify('Received unexpected response from the server.')
@@ -100,7 +100,7 @@ const requestFactory = (meth, notify = null) => {
         if (notify) notify('Received unexpected response from the server.')
         throw new Non200Error(resp.status, resp.text())
       }
-      if ('file' in options && options['file'] === true){
+      if (options['rtype'] === 'file'){
         return Promise.resolve(resp.blob())
       }
       return Promise.resolve(resp.text())

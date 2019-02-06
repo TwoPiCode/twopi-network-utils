@@ -28,6 +28,14 @@ function Non200Error(status, body) {
 Non200Error.prototype = Object.create(Error.prototype)
 Non200Error.prototype.constructor = Non200Error
 
+function BadReturnType(type) {
+  this.name = 'BadReturnType'
+  this.message = '\'' + type + '\' is an invalid \'rtype\' option. The options are [\'json\', \'file\', \'string\']'
+  this.stack = new Error().stack
+}
+BadReturnType.prototype = Object.create(Error.prototype)
+BadReturnType.prototype.constructor = BadReturnType
+
 const contentType = {
   GET: 'application/x-www-form-urlencoded',
   POST: 'application/json',
@@ -54,6 +62,12 @@ const requestFactory = (meth, notify = null) => {
 
     if (token) {
       finalHeaders['Authorization'] = 'Bearer ' + token
+    }
+
+    if (!('rtype' in options)){
+      options['rtype'] = 'json'
+    } else if (['json', 'file', 'string'].indexOf(options['rtype']) < 0){
+      Promise.reject(new BadReturnType(options['rtype']))
     }
 
     return fetch(path, {

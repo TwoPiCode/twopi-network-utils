@@ -97,7 +97,7 @@ describe('Network Util', function() {
   })
 
   it('should error before the request is made', function() {
-    return requestFactory(GET)()('', '', undefined, {'rtype': 'err'}).catch(resp => {
+    return requestFactory(GET)('', '', undefined, {'rtype': 'err'}).catch(resp => {
       return expect(resp).to.be.an.instanceOf(BadReturnType)
     })
   })

@@ -68,7 +68,7 @@ const requestFactory = (meth, notify = null) => {
     if (!options.hasOwnProperty('rtype')){
       options['rtype'] = 'json'
     } else if (available.indexOf(options['rtype']) < 0){
-      Promise.reject(new BadReturnType(options['rtype']))
+      return Promise.reject(new BadReturnType(options['rtype']))
     }
 
     return fetch(path, {

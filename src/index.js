@@ -64,9 +64,10 @@ const requestFactory = (meth, notify = null) => {
       finalHeaders['Authorization'] = 'Bearer ' + token
     }
 
-    if (!('rtype' in options)){
+    const available = ['json', 'file', 'string']
+    if (!options.hasOwnProperty('rtype')){
       options['rtype'] = 'json'
-    } else if (['json', 'file', 'string'].indexOf(options['rtype']) < 0){
+    } else if (available.indexOf(options['rtype']) < 0){
       Promise.reject(new BadReturnType(options['rtype']))
     }
 
@@ -76,34 +77,32 @@ const requestFactory = (meth, notify = null) => {
       method: meth,
       body: body
     }).then(resp => {
-      // If the user does not want response converted to json include a "json": false mapping in the arguments[3]
-      if (options['rtype'] === 'json'){
-        return resp.json().catch(() => {
+
+      const checkAndResolve = (data) => {
+        if (resp.status < 200 || resp.status > 300) {
           if (notify)
-            notify('Received unexpected response from the server.')
-          throw new JSONParseError(resp.status)
-        }).then(json => {
-          if (resp.status < 200 || resp.status > 300) {
-            if (notify)
-              if (json._errors === undefined)
-                notify('Received unexpected response from the server.')
-              else
-                notify(json._errors.join('\n'))
-            throw new Non200Error(resp.status, json)
-          } else {
-            return Promise.resolve(json)
-          }
-        })
+            if (data._errors === undefined)
+              notify('Received unexpected response from the server')
+            else
+              notify(data._errors.join('\n'))
+          throw new Non200Error(resp.status, data)
+        } else {
+          return data
+        }
       }
 
-      if (resp.status < 200 || resp.status > 300) {
-        if (notify) notify('Received unexpected response from the server.')
-        throw new Non200Error(resp.status, resp.text())
+      switch (options['rtype']) {
+      case 'json':
+        return resp.json().catch(() => {
+          if (notify)
+            notify('Received unexpected response from the server')
+          throw new JSONParseError(resp.status)
+        }).then(checkAndResolve)
+      case 'file':
+        return resp.blob().then(checkAndResolve)
+      case 'string':
+        return resp.text().then(checkAndResolve)
       }
-      if (options['rtype'] === 'file'){
-        return Promise.resolve(resp.blob())
-      }
-      return Promise.resolve(resp.text())
     })
   }
 }

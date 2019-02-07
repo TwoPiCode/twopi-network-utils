@@ -107,4 +107,4 @@ const requestFactory = (meth, notify = null) => {
   }
 }
 
-module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error}
+module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error, BadReturnType}

@@ -64,10 +64,10 @@ const requestFactory = (meth, notify = null) => {
       finalHeaders['Authorization'] = 'Bearer ' + token
     }
 
-    const available = ['json', 'file', 'string']
+    const allowedReturnTypes = ['json', 'file', 'string']
     if (!options.hasOwnProperty('rtype')){
       options['rtype'] = 'json'
-    } else if (available.indexOf(options['rtype']) < 0){
+    } else if (allowedReturnTypes.indexOf(options['rtype']) < 0){
       return Promise.reject(new BadReturnType(options['rtype']))
     }
 

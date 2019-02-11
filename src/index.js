@@ -28,6 +28,14 @@ function Non200Error(status, body) {
 Non200Error.prototype = Object.create(Error.prototype)
 Non200Error.prototype.constructor = Non200Error
 
+function BadReturnType(type) {
+  this.name = 'BadReturnType'
+  this.message = '\'' + type + '\' is an invalid \'rtype\' option. The options are [\'json\', \'file\', \'string\']'
+  this.stack = new Error().stack
+}
+BadReturnType.prototype = Object.create(Error.prototype)
+BadReturnType.prototype.constructor = BadReturnType
+
 const contentType = {
   GET: 'application/x-www-form-urlencoded',
   POST: 'application/json',
@@ -56,39 +64,47 @@ const requestFactory = (meth, notify = null) => {
       finalHeaders['Authorization'] = 'Bearer ' + token
     }
 
+    const allowedReturnTypes = ['json', 'file', 'string']
+    if (!options.hasOwnProperty('rtype')){
+      options['rtype'] = 'json'
+    } else if (allowedReturnTypes.indexOf(options['rtype']) < 0){
+      return Promise.reject(new BadReturnType(options['rtype']))
+    }
+
     return fetch(path, {
       ...options,
       headers: finalHeaders,
       method: meth,
       body: body
     }).then(resp => {
-      // If the user does not want response converted to json include a "json": false mapping in the arguments[3]
-      if ('json' in options && options['json'] === false){
-        if (resp.status < 200 || resp.status > 300) {
-          if (notify) notify('Received unexpected response from the server.')
-          throw new Non200Error(resp.status, resp.text())
-        }
-        return Promise.resolve(resp.text())
-      }
 
-      return resp.json().catch(() => {
-        if (notify)
-          notify('Received unexpected response from the server.')
-        throw new JSONParseError(resp.status)
-      }).then(json => {
+      const checkAndResolve = (data) => {
         if (resp.status < 200 || resp.status > 300) {
           if (notify)
-            if (json._errors === undefined)
-              notify('Received unexpected response from the server.')
+            if (data._errors === undefined)
+              notify('Received unexpected response from the server')
             else
-              notify(json._errors.join('\n'))
-          throw new Non200Error(resp.status, json)
+              notify(data._errors.join('\n'))
+          throw new Non200Error(resp.status, data)
         } else {
-          return Promise.resolve(json)
+          return data
         }
-      })
+      }
+
+      switch (options['rtype']) {
+      case 'json':
+        return resp.json().catch(() => {
+          if (notify)
+            notify('Received unexpected response from the server')
+          throw new JSONParseError(resp.status)
+        }).then(checkAndResolve)
+      case 'file':
+        return resp.blob().then(checkAndResolve)
+      case 'string':
+        return resp.text().then(checkAndResolve)
+      }
     })
   }
 }
 
-module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error}
+module.exports = {requestFactory, GET, POST, POST_FILE, PUT, DELETE, PATCH, JSONParseError, Non200Error, BadReturnType}

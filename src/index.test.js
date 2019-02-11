@@ -1,4 +1,4 @@
-import {requestFactory, GET, Non200Error, JSONParseError} from './index'
+import {requestFactory, GET, Non200Error, JSONParseError, BadReturnType} from './index'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import fetchMock from 'fetch-mock'
@@ -93,6 +93,12 @@ describe('Network Util', function() {
     fetchMock.once('*', responseToSend)
     return requestFactory(GET)().catch(resp => {
       return expect(resp).to.be.an.instanceOf(JSONParseError).and.to.have.a.property('status', 200)
+    })
+  })
+
+  it('should error before the request is made', function() {
+    return requestFactory(GET)('', '', undefined, {'rtype': 'err'}).catch(resp => {
+      return expect(resp).to.be.an.instanceOf(BadReturnType)
     })
   })
 })

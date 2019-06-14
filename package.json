@@ -7,7 +7,7 @@
     "lint": "eslint src/*.js",
     "build": "babel src --out-dir dist",
     "prepare": "npm run build",
-    "test": "mocha --require babel-core/register src/**/*test.js"
+    "test": "mocha --require @babel/register src/**/*test.js"
   },
   "author": "John Wiseheart <johnwiseheart@gmail.com>",
   "license": "MIT",
@@ -15,8 +15,9 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
     "babel-eslint": "^7.1.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "eslint": "^5.16.0",
